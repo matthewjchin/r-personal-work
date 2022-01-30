@@ -1,0 +1,245 @@
+---
+title: 'Plots: Graphical Methods of Data Exploration'
+output:
+html_document:
+df_print: paged
+---
+
+A scatterplot is the most appropriate plot if the data being used is best considered to be continuous for the variable in question. 
+
+Allocation involves initializing an object to be of any type and value. 
+
+```{r}
+x= 1:10
+x
+
+```
+Concatenation is the joining of values, in this case, into one vector. This is done using the c() function.
+
+```{r}
+y=c(11,12,9,7,5,8,4,4,5,3)
+y
+
+```
+
+Plot directive needs two arguments: one for x-axis, another for y-axis
+Visualize the points from x, y
+
+```{r}
+plot(x,y)
+
+```
+Add labels to axes 
+
+```{r}
+plot(x,y,ylab = "Response variable",xlab = "Explanatory variable")
+
+```
+Change plotting symbols.
+
+```{r}
+plot(x,y,pch=3,ylab = "Response variable",xlab = "Explanatory variable")
+```
+
+```{r}
+plot(x,y,pch=2,ylab = "Response variable",xlab = "Explanatory variable")
+```
+Add lines to scatterplot to for:
+1. Determining regression
+2. Own specifications
+
+```{r}
+plot(x,y,pch=2,ylab="Response variable",xlab="Explanatory variable",lines(c(0,10),c(12,0),lty=2))
+abline(lm(y~x))
+```
+
+
+```{r}
+v = c(2,4,6,8,10)
+w = c(8,5,6,6,2)
+```
+
+```{r}
+plot(x,y,pch=2,ylab="Response variable",xlab="Explanatory variable")
+abline(lm(y~x))
+lines(c(0,10),c(12,0),lty=2)
+points(v,w,pch=3)
+abline(lm(w~v),lty=3)
+```
+Use dataframe called "weather" and read data from the file to use
+```{r}
+sex=c("male","female")
+weather<-read.table("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/SilwoodWeather.txt",header=T)
+names(weather)
+```
+Attach the names info to the data frame
+
+```{r}
+attach(weather)
+month = factor(month)
+
+# Check status of variable "month"
+is.factor(month)
+```
+Variable status of factor confirmed. 
+Plot using categorical explanatory variable, in this case, month
+```{r}
+plot(month,upper)
+```
+Data Visualization in Color
+This is a color wheel of 30 colors
+```{r}
+pie(rep(1,30), col=rainbow(30), radius=0.9)
+```
+Creating a color wheel with 10 colors and radius 0.5
+Colors created are generated in counterclockwise direction
+```{r}
+pie(rep(1,10), col=rainbow(10), radius=0.5)
+```
+
+```{r}
+x = seq(0,10,0.1)
+y1 = 2 + 3 * x- 0.25*x^2
+y2 = 3+3.3*x- 0.3 * x^2
+```
+
+```{r}
+par(bg="ghostwhite")
+plot(x,y2,type="n",ylab = "")
+lines(x,y2,col="red")
+lines(x,y1,col="blue")
+```
+Colored scatterplot
+
+```{r}
+jantemps=read.table("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/jantemp.txt", header=T)
+attach(jantemps)
+names(jantemps)
+```
+
+```{r}
+max(tmax)
+```
+
+```{r}
+min(tmin)
+```
+Includes for loop in R
+```{r}
+plot(day,tmax,ylim=c(-12,12),type="n",ylab = "Temperature")
+points(day,tmin,col="blue",pch=16)
+points(day,tmax,col="red",pch=16)
+for (i in 1:31) lines(c(i,i), c(tmin[i], tmax[i]), col="green")
+```
+Histogram
+```{r}
+x = rnorm(1000)
+par(bg="cornsilk")
+hist(x, col="lavender", main="")
+```
+Pie chart with color
+```{r}
+fate = c(0.12, 0.3, 0.26, 0.16, 0.04, 0.12)
+names(fate) = c("Ragwort", "Thistle", "Willowherb", "Rush", "Orchid", "Knapweed")
+pie(fate, col = c("purple", "violetred1", "green3", "cornsilk", "cyan", "white"))
+```
+Multivariate Plots
+```{r}
+pollution = read.table("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/OtherFiles/pollute.txt",header=T)
+attach(pollution)
+names(pollution)
+ 
+```
+Scatterplots, trendlines all in an entire matrix
+```{r}
+pairs(pollution,panel=panel.smooth)
+```
+Tree-based models
+```{r}
+library(tree)
+regtree = tree(Pollution~., data=pollution)
+```
+
+```{r}
+plot(regtree)
+text(regtree)
+```
+
+```{r}
+attach(pollution)
+coplot(Pollution~Temp | Rain)
+```
+
+```{r}
+
+par(mfrow=c(1,1))
+par(mfrow=c(1,2))
+par(mfrow=c(2,2))
+
+```
+
+```{r}
+plotdata = read.table("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/plotdata.txt", header = T)
+attach(plotdata)
+names(plotdata)
+
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(x,y,type="l")
+plot(x,y,log="xy",type="l")
+plot(x,y,log="y", type="l")
+plot(x,y,log="x", type="l")
+```
+
+```{r}
+par(mfrow=c(1,2))
+plot(x,y,type="l")
+plot(x,y,ylim=c(0,50),type="l")
+text(0.8,45,"(b)")
+```
+
+```{r}
+map.places= read.csv("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/map.places.csv.txt",header=T)
+attach(map.places)
+names(map.places)
+```
+
+```{r}
+map.data=read.csv("/Users/mattjchin/Desktop/personal_projects/r_work/Course Downloadable Data  Exercises-20220120/OtherFiles/bowens.csv",header=T)
+attach(map.data)
+names(map.data)
+nn=ifelse(north<60,north+100,north)
+```
+
+```{r}
+plot(c(20,100),c(60,110),type="n",xlab="",ylab="")
+for (i in 1:length(wanted)){
+ii <- which(place == as.character(wanted[i]))
+text(east[ii], nn[ii], as.character(place[ii]), cex = 0.6) }
+
+```
+
+```{r}
+```
+
+```{r}
+labels=letters[1:10]
+labels
+```
+
+```{r}
+plot(1:10,1:10,type="n")
+text(1:10,1:10,labels,cex=2)
+plot(1:10,1:10,type="n")
+text(1:10,10:1,labels,cex=2,srt=180)
+```
+
+
+
+
+
+
+
+
