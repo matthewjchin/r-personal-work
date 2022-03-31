@@ -1,0 +1,155 @@
+---
+title: "Matthew Chin • MSBA 320 • Project 7"
+output:
+  html_document:
+    df_print: paged
+---
+
+Read oneway file and get column names
+```{r}
+oneway = read.table("oneway.txt", header=T, sep = ",")
+attach(oneway)
+names(oneway)
+# oneway
+```
+
+```{r}
+tapply(Growth, Photoperiod, mean)
+```
+
+```{r}
+Photoperiod = ordered(Photoperiod,levels=c("Very.short","Short","Long","Very.long"))
+```
+
+```{r}
+tapply(Growth,Photoperiod,mean)
+```
+AOV Directive: Response.variable ~ Explanatory.variable
+```{r}
+is.factor(Photoperiod)
+```
+
+```{r}
+one.way = aov(Growth~Photoperiod)
+summary(one.way)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(one.way)
+```
+
+```{r}
+rm(Growth, Photoperiod)
+detach(oneway)
+```
+
+Two-Way ANOVA in R
+```{r}
+twoway= read.table("twoway.txt",header=T)
+attach(twoway)
+names(twoway)
+```
+
+```{r}
+tapply(Growth, Genotype, mean)
+```
+
+```{r}
+two.way = aov(Growth~Genotype+Photoperiod)
+summary(two.way)
+```
+
+```{r}
+factorial = read.table("factorial.txt",header=T)
+factorial
+```
+
+```{r}
+attach(factorial)
+model = aov(growth~diet*coat)
+summary(model)
+```
+
+```{r}
+tapply(growth,list(coat,diet),sum)
+```
+
+```{r}
+SSAB = sum(as.vector(tapply(growth,list(coat,diet),sum))^2)/2
+SSAB
+```
+
+```{r}
+CF= sum(growth)^2/length(growth)
+CF
+```
+
+```{r}
+SSAB-CF-2.66-2.61333
+```
+
+```{r}
+model2= update(model , ~ . - diet:coat)
+anova(model,model2)
+```
+
+```{r}
+summary(model2)
+```
+
+```{r}
+model3 = update(model2, ~. -diet)
+anova(model2,model3)
+```
+
+```{r}
+summary(model3)
+```
+
+```{r}
+tapply(growth, diet, mean)
+```
+
+```{r}
+diet2= factor(1+(diet=="C"))
+diet2
+```
+
+```{r}
+model4= update(model3, ~. +diet2)
+anova(model3, model4)
+```
+
+```{r}
+model5= update(model4, ~. +diet2:coat)
+anova(model4,model5)
+```
+
+```{r}
+summary(model4)
+```
+Three-way Factorial ANOVA
+```{r}
+Daphnia.data = read.csv("daphnia.csv", header=T, sep = ",")
+# Daphnia.data
+attach(Daphnia.data)
+names(Daphnia.data)
+```
+
+```{r}
+factorial = aov(Growth.rate~Water*Detergent*Daphnia)
+summary(factorial)
+```
+
+```{r}
+tapply(Growth.rate,list(Detergent,Daphnia),mean)
+```
+
+```{r}
+interaction.plot(Detergent,Daphnia,Growth.rate)
+```
+
+
+
+

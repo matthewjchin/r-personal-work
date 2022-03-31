@@ -1,0 +1,160 @@
+---
+title: "Matthew Chin, MSBA 324, Project 6"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+# Load the data in a table
+regression = read.table("regression.txt",header=T)
+regression
+```
+
+```{r}
+# Get the names of the columns from the table and use as values
+attach(regression)
+names(regression)
+```
+
+```{r}
+# Scatterplot of tannin, growth
+plot(tannin, growth)
+```
+
+```{r}
+# Get the mean of growth column values
+gro_mean = mean(growth)
+gro_mean
+```
+
+```{r}
+# Plot average value of y as line on graph
+plot(tannin, growth)
+abline(gro_mean, 0)
+```
+
+```{r}
+# 
+qt(.975,7)
+```
+
+
+```{r}
+sum(tannin);sum(tannin^2)
+```
+
+```{r}
+sum(growth);sum(growth^2)
+```
+
+```{r}
+sum(tannin*growth)
+```
+
+```{r}
+qf(.95, 1, 7)
+```
+
+```{r}
+1-pf(30.98,1,7)
+```
+
+```{r}
+qt(.975,7)
+```
+
+```{r}
+# Plot regression line against tannin, growth values
+plot(tannin, growth)
+abline(lm(growth~tannin))
+```
+
+```{r}
+model = lm(growth~tannin)
+model
+```
+
+```{r}
+summary(model)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(model)
+```
+
+```{r}
+11.7556-1.2167*5.5
+```
+
+```{r}
+predict(model,list(tannin=5.5))
+```
+
+```{r}
+par(mfrow=c(1,1))
+rm(tannin,growth)
+```
+
+
+```{r}
+decay = read.table("decay.txt",header=T)
+attach(decay)
+names(decay)
+```
+
+```{r}
+plot(time, amount)
+abline(lm(amount~time))
+```
+
+```{r}
+result = lm(amount~time)
+summary(result)
+```
+
+```{r}
+plot(result)
+```
+
+```{r}
+plot(time, amount, log="y")
+```
+
+```{r}
+transformed = lm(log(amount)~time)
+summary(transformed)
+```
+
+```{r}
+plot(transformed)
+```
+
+```{r}
+plot(time,amount)
+```
+
+```{r}
+smoothx=seq(0,30,1)
+smoothy=exp(predict(transformed,list(x=smoothx)))
+```
+
+```{r}
+plot(time,amount)
+lines(smoothx,smoothy)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

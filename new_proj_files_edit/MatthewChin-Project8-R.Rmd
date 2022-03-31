@@ -1,0 +1,303 @@
+---
+title: "Matthew Chin • MSBA 320 • Project 8"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(tidyverse)
+library(tidyquant)
+library(modelr)
+library(gridExtra)
+library(grid)
+```
+
+
+```{r}
+temps = read.csv("GlobalTemperaturesNew.csv",sep=",",header=T)
+attach(temps)
+names(temps)
+```
+
+```{r}
+head(temps)
+```
+
+```{r}
+dim(temps)
+```
+
+```{r}
+summary(temps)
+```
+
+Use the following dataset 'globaltemperatures', to review (descriptive data analysis with plots) the changes in the 'LandAverageTemperature', 'LandAndOceanAverageTemperature', as well as 'LandMaxTemperature' (3 plots each vs time).
+```{r}
+summary(temps[2]);summary(temps[4]);summary(temps[8])
+```
+266 years of global temperature data.
+Since dates are of string type, might have to redact new CSV or Excel file with years in actual numeric types. 
+```{r}
+3192/12
+```
+
+```{r}
+summary(LandAndOceanAverageTemperature)
+```
+
+```{r}
+head(dt)
+```
+
+```{r}
+temps$dt = as.Date(temps$dt)
+temps$year = as.numeric(format(temps$dt, "%Y"))
+temps$month = as.numeric(format(temps$dt, "%m"))
+```
+
+```{r}
+head(temps$year);tail(temps$year);head(temps$month);tail(temps$month)
+```
+
+```{r}
+hist(temps$LandAverageTemperature,ylim = c(0,750))
+```
+
+```{r}
+hist(temps$LandAndOceanAverageTemperature,ylim = c(0,500))
+```
+
+```{r}
+hist(temps$LandMaxTemperature,ylim = c(0,300))
+```
+
+Plots of the three variables to compare against time
+```{r}
+plot(temps$year, temps$LandAverageTemperature, main = "Land Average Temperature, 1750-2015", xlab = "Year", ylab = "Temperature")
+```
+
+```{r}
+plot(temps$year, temps$LandAndOceanAverageTemperature, main = "Land and Ocean Average Temperature, 1850-2015", xlab = "Year",
+     ylab = "Temperature", xlim = c(1850,2020))
+```
+
+```{r}
+plot(temps$year, temps$LandMaxTemperature,  main = "Land Max Temperature, 1850-2015", xlab = "Year",
+     ylab = "Temperature", xlim = c(1850,2020))
+```
+Analysis of the plots of temperatures against time:
+
+The data for LandAverageTemperature has been recorded since January 1750, whereas the data for LandAndOceanAverageTemperature and LandMaxTemperature and the earliest data points came no earlier than January 1850. It can be seen that over more than 250 years worth of temperature data on land, the average temperature on land has risen. Over the last 150-plus years of data for ocean and maximum temperatures per year, such temperatures on both land and sea have also increased albeit exponentially. 
+
+From each of the three plots, while not being specific enough on temperatures based on the month of the year, there can be inferences made on the seasons of the year and how land and ocean temperatures vary by the seasons of the year. Around Winter, which ranges anywhere between January and March, the average temperature of the land and ocean will likely be the coolest of the year. This would be followed by Fall temperature, then Spring, then Summer. This can be seen a little more obviously in the LandAndOceanAverageTemperature and LandMaxTemperature plots where many of the data points seem to be divided into anywhere between four and five groups. 
+
+```{r}
+summary(temps$LandAndOceanAverageTemperature)
+```
+
+```{r}
+land_ocean = temps$LandAndOceanAverageTemperature
+
+ggplot(temps, aes(year, LandAndOceanAverageTemperature)) + 
+  geom_point()
+```
+
+```{r}
+temps <- temps %>% 
+  mutate(date=lubridate::parse_date_time(dt, "ymd"))
+```
+Simple moving average for 5 years.
+```{r}
+library(smooth)
+sma(LandAndOceanAverageTemperature, n = 5)
+```
+
+Simple moving average for 10 years.
+```{r}
+sma10 = sma(LandAndOceanAverageTemperature, n = 10)
+```
+
+```{r}
+sma10
+```
+
+```{r}
+plot(sma(LandAndOceanAverageTemperature, n = 10))
+```
+
+```{r}
+library(zoo)
+library(fpp2)
+library(lubridate)
+```
+
+Data was not collected on land and ocean average temps until 1850. Skip 100 years or 1200 months.
+
+```{r}
+temps <- temps %>%
+  dplyr::arrange(desc(temps$year)) %>%
+  dplyr::group_by(year) %>%
+  dplyr::mutate(temps_1 = zoo::rollmean(LandAndOceanAverageTemperature, k=1, fill=NA),
+                temps_3 = zoo::rollmean(LandAndOceanAverageTemperature, k=3, fill=NA),
+                temps_5 = zoo::rollmean(LandAndOceanAverageTemperature, k=5, fill=NA),
+                temps_7 = zoo::rollmean(LandAndOceanAverageTemperature, k=7, fill=NA),
+                temps_9 = zoo::rollmean(LandAndOceanAverageTemperature, k=9, fill=NA),
+                temps_11 = zoo::rollmean(LandAndOceanAverageTemperature, k=11, fill=NA),
+                temps_13 = zoo::rollmean(LandAndOceanAverageTemperature, k=13, fill=NA),
+                temps_15 = zoo::rollmean(LandAndOceanAverageTemperature, k=15, fill=NA),
+                ) %>%
+  dplyr::ungroup()
+
+temps <- temps %>%
+  dplyr::arrange(desc(temps$year)) %>%
+  dplyr::group_by(year) %>%
+  dplyr::mutate(temps_2 = zoo::rollmean(LandAndOceanAverageTemperature, k=2, fill=NA),
+                temps_4 = zoo::rollmean(LandAndOceanAverageTemperature, k=4, fill=NA),
+                temps_6 = zoo::rollmean(LandAndOceanAverageTemperature, k=6, fill=NA),
+                temps_8 = zoo::rollmean(LandAndOceanAverageTemperature, k=8, fill=NA),
+                temps_10 = zoo::rollmean(LandAndOceanAverageTemperature, k=10, fill=NA),
+                temps_16 = zoo::rollmean(LandAndOceanAverageTemperature, k=16, fill=NA)
+                ) %>%
+  dplyr::ungroup()
+```
+
+```{r}
+summary(temps$temps_1); summary(temps$temps_3); summary(temps$temps_5); summary(temps$temps_7); summary(temps$temps_9); summary(temps$temps_11)
+```
+
+```{r}
+summary(temps$temps_1); summary(temps$temps_4); summary(temps$temps_6); summary(temps$temps_8); summary(temps$temps_10); summary(temps$temps_16)
+```
+
+
+```{r}
+library(hrbrthemes)
+temps %>%
+  dplyr::filter(dt >= lubridate::as_date("1850-01-01") &
+
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = dt, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() + 
+  ggplot2::labs(title = "Rolling Average Land & Ocean Temps", 
+                  subtitle = "Between 1850-01-01 and 2015-12-01",
+                  y = "Temp", 
+                  color = "Metric",
+                  x = "Date")
+```
+Month of January Temperatures, 1991-2015
+```{r}
+temps %>% 
+  dplyr::filter(month == 1) %>% 
+  dplyr::filter(date >= lubridate::as_date("1991-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1991-2015 (Month of January)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Tempeature", 
+                  color = "Metric",
+                  x = "Year") 
+```
+Month of June Temperatures, 1991-2015
+```{r}
+temps %>% 
+  dplyr::filter(month == 6) %>% 
+  dplyr::filter(date >= lubridate::as_date("1991-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1991-2015 (Month of June)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Temperature", 
+                  color = "Metric",
+                  x = "Year") 
+```
+Month of April Temperatures, 1991-2015
+```{r}
+temps %>% 
+  dplyr::filter(month == 4) %>% 
+  dplyr::filter(date >= lubridate::as_date("1991-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1991-2015 (Month of April)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Temperature", 
+                  color = "Metric",
+                  x = "Year") 
+
+```
+Month of January Temperatures, 1850-2015
+```{r}
+temps %>% 
+  dplyr::filter(month == 1) %>% 
+  dplyr::filter(date >= lubridate::as_date("1991-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1991-2015 (Month of January)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Tempeature", 
+                  color = "Metric",
+                  x = "Year") 
+```
+Month of June Temperatures, 1850-2015
+```{r}
+temps %>% 
+  dplyr::filter(month == 6) %>% 
+  dplyr::filter(date >= lubridate::as_date("1850-01-01") &
+                  date <= lubridate::as_date("2015-07-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1850-2015 (Month of June)", 
+                  subtitle = "Between 1850-01-01 & 2015-12-01",
+                  y = "Tempeature", 
+                  color = "Metric",
+                  x = "Year") 
+```
+
+```{r}
+temps %>% 
+  dplyr::filter(month == 2) %>% 
+  dplyr::filter(date >= lubridate::as_date("1850-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1850-2015 (Month of February)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Tempeature", 
+                  color = "Metric",
+                  x = "Year") 
+```
+
+```{r}
+temps %>% 
+  dplyr::filter(month == 12) %>% 
+  dplyr::filter(date >= lubridate::as_date("1850-01-01") &
+                  date <= lubridate::as_date("2015-12-01")) %>% 
+  ggplot2::ggplot(aes(x = year, 
+                      y = LandAndOceanAverageTemperature)) +
+  ggplot2::geom_line() +   
+  ggplot2::labs(title = "Land And Ocean Avg Temps, 1850-2015 (Month of December)", 
+                  subtitle = "Between 1991-01-01 & 2015-12-01",
+                  y = "Tempeature", 
+                  color = "Metric",
+                  x = "Year") 
+
+```
+
+
+It is made evident by the time-series analysis of the average land and ocean temperatures that there is an increase in temperature of both in the last 150-plus years that data was collected. Each vertical line appears to be a range of the temperatures; the bottom of each bar is the lowest average temperature and the top of each bar is the highest recorded average temperature. There appears to be a gradual rise in temperature no matter the month and timespan, but in recent years it seems that the average land and sea temperatures are rising. 
+
+
+
+
+
