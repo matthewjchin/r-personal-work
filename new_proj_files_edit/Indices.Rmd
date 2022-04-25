@@ -1,5 +1,5 @@
 ---
-title: "Matthew Chin - Project 4 in R"
+title: "Matthew Chin - Indices in R"
 output:
   pdf_document: default
   html_notebook: default

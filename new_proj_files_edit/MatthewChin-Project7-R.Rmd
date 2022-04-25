@@ -1,5 +1,5 @@
 ---
-title: "Matthew Chin • MSBA 320 • Project 7"
+title: "Matthew Chin - ANOVA in R"
 output:
   html_document:
     df_print: paged

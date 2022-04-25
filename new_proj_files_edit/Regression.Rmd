@@ -1,5 +1,5 @@
 ---
-title: "Matthew Chin, MSBA 324, Project 6"
+title: "Matthew Chin - Regression Models in R"
 output:
   html_document:
     df_print: paged
