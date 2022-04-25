@@ -1,5 +1,5 @@
 ---
-title: "Matthew Chin • MSBA 320 • Project 8"
+title: "Matthew Chin - Time Series Analysis in R"
 output:
   html_document:
     df_print: paged

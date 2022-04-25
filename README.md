@@ -3,5 +3,9 @@ R code that I am posting to showcase what I have learned as both a graduate stud
 
 This repository will also contain some Python notebooks via Jupyter for additional context and comparison between the Python and R programming languages.
 
+Any of the file names can be found from the [R-lang repository](https://github.com/shifteight/R-lang) on GitHub. 
+
+The specific folder in the repository of all file names from which were loaded from can be found [here](https://github.com/shifteight/R-lang/tree/master/TRB/data).
+
 
 Last updated: Sunday 24 April 2022
